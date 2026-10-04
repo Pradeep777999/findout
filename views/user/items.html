@@ -1281,9 +1281,32 @@
 
         populateTypeFilter();
 
+        // Check if URL contains query parameter (e.g. from notification click)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('search')) {
+          const s = urlParams.get('search');
+          if (byId('fSearch')) byId('fSearch').value = s;
+        }
+
         applyFilters();
 
         updateStats(allItems);
+
+        // Highlight and scroll to specific matched item if id provided
+        if (urlParams.has('id')) {
+          const targetId = urlParams.get('id');
+          setTimeout(() => {
+            const targetRow = document.getElementById('item-' + targetId);
+            if (targetRow) {
+              targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              targetRow.style.transition = 'background-color 0.5s ease';
+              targetRow.style.backgroundColor = 'rgba(201, 168, 76, 0.25)';
+              setTimeout(() => {
+                targetRow.style.backgroundColor = '';
+              }, 4000);
+            }
+          }, 300);
+        }
 
       } catch (e) {
 
@@ -2034,7 +2057,7 @@
 
 
       return `
-    <tr>
+    <tr id="item-${item._id}" data-id="${item._id}">
 
       <td>
         <strong style="font-weight:600;">

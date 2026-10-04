@@ -3,6 +3,7 @@ const Item = require('../models/Item');
 const Collected = require('../models/Collected');
 const { getCurrentCycle, parseUserEmail } = require('../utils/helper');
 const cloudinary = require('../config/cloudinary');
+const { analyzeAndNotifyMatches } = require('../utils/matchingService');
 
 
 // ================= CLOUDINARY IMAGE UPLOAD =================
@@ -57,8 +58,8 @@ async function submitLost(req, res) {
       name: req.body.name,
       description: req.body.description,
       location: "MITS Admin Office",
-      lostLocation: req.body.lostlocation,
-      dateLost: req.body.dateLost,
+      lostLocation: req.body.lostlocation || req.body.lostLocation || req.body.location || "MITS Campus",
+      dateLost: req.body.dateLost || req.body.datelost || new Date().toISOString().split("T")[0],
 
       userId: req.session.userId,
       userName: user.name,
@@ -77,6 +78,12 @@ async function submitLost(req, res) {
     });
 
     await item.save();
+
+    // Automatic weighted matching against existing active FOUND reports
+    // If confidence >= MATCH_THRESHOLD (80%), notifies the LOST reporter (Student A)
+    analyzeAndNotifyMatches(item).catch((err) => {
+      console.error("[Item Controller] Automatic match analysis error:", err.message);
+    });
 
     res.redirect("/items.html");
 
@@ -115,9 +122,8 @@ async function submitFound(req, res) {
       name: req.body.name,
       description: req.body.description,
       location: "MITS Admin Office",
-
-      foundLocation: req.body.foundlocation,
-      dateFound: req.body.dateFound,
+      foundLocation: req.body.foundlocation || req.body.foundLocation || req.body.location || "MITS Campus",
+      dateFound: req.body.dateFound || req.body.datefound || new Date().toISOString().split("T")[0],
 
       userId: req.session.userId,
       userName: user.name,
@@ -140,6 +146,12 @@ async function submitFound(req, res) {
     });
 
     await item.save();
+
+    // Automatic weighted matching against existing active LOST reports
+    // If confidence >= MATCH_THRESHOLD (80%), notifies the matching LOST reporter
+    analyzeAndNotifyMatches(item).catch((err) => {
+      console.error("[Item Controller] Automatic match analysis error:", err.message);
+    });
 
     res.redirect("/items.html");
 

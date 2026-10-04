@@ -3,6 +3,7 @@ const path = require('path');
 const Item = require('../models/Item');
 const Collected = require('../models/Collected');
 const { getCurrentCycle, parseUserEmail } = require('../utils/helper');
+const { createDualNotification } = require('../utils/notificationService');
 
 // Mark Item as Collected
 async function markCollected(req, res) {
@@ -35,6 +36,19 @@ async function markCollected(req, res) {
 
     await collected.save();
     await Item.findByIdAndDelete(req.body.itemId);
+
+    // Notify user that their item has been collected (Dual Notification: In-App + System Push)
+    if (item.userId) {
+      const matchKey = `item_collected_${item._id}_${item.userId}`;
+      createDualNotification({
+        userId: item.userId,
+        title: "Item Collected 📦",
+        message: `Your item "${item.name}" has been marked as collected.`,
+        type: "item_collected",
+        matchKey,
+        url: "/collected.html"
+      }).catch((e) => console.error("[Admin Controller] Collected notification error:", e.message));
+    }
 
     res.redirect("/manager.html");
   } catch (err) {

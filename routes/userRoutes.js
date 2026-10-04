@@ -25,7 +25,9 @@ router.get("/admin.html", requireAdminView, userController.serveAdmin);
 router.get("/analytics.html", requireManagerView, userController.serveAnalytics);
 router.get("/manager.html", requireManagerView, userController.serveManager);
 
-// API session endpoint
+// API user endpoints
 router.get("/api/user", userController.getCurrentUser);
+router.post("/api/user/change-name", userController.changeName);
+router.post("/api/user/change-password", userController.changePassword);
 
 module.exports = router;

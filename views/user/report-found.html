@@ -1,644 +1,1026 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Report Found Item — MITS FindMyThing Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/navbar.css">
-<style>
-:root {
-  --navy:    #1a2744;
-  --navy2:   #243058;
-  --gold:    #c9a84c;
-  --gold2:   #e8c97a;
-  --cream:   #fdf9f3;
-  --muted:   #6b7280;
-  --border:  #dde3ed;
-  --red:     #c0392b;
-  --success: #1a6b3a;
-  --white:   #ffffff;
-  --shadow:  0 8px 40px rgba(26,39,68,0.13);
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Found Item — MITS FindMyThing Portal</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/css/navbar.css">
+  <style>
+    :root {
+      --navy: #1a2744;
+      --navy2: #243058;
+      --gold: #c9a84c;
+      --gold2: #e8c97a;
+      --cream: #fdf9f3;
+      --muted: #6b7280;
+      --border: #dde3ed;
+      --red: #c0392b;
+      --success: #1a6b3a;
+      --white: #ffffff;
+      --shadow: 0 8px 40px rgba(26, 39, 68, 0.13);
+    }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--cream);
-  color: var(--navy);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-/* ── Background ── */
-.bg-canvas {
-  position: fixed; inset: 0; z-index: 0;
-  overflow: hidden; pointer-events: none;
-}
-.bg-canvas::before {
-  content: '';
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 10% 20%, rgba(201,168,76,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 70% at 90% 80%, rgba(26,39,68,0.06) 0%, transparent 60%);
-}
-.geo-shape {
-  position: absolute;
-  border: 1px solid rgba(201,168,76,0.18);
-  border-radius: 2px;
-  animation: geoFloat linear infinite;
-}
-.geo-shape:nth-child(1) { width:80px;  height:80px;  top:8%;   left:5%;   animation-duration:18s; opacity:0.5; }
-.geo-shape:nth-child(2) { width:120px; height:120px; top:20%;  right:6%;  animation-duration:24s; animation-delay:-4s; opacity:0.35; }
-.geo-shape:nth-child(3) { width:50px;  height:50px;  bottom:25%; left:8%; animation-duration:14s; animation-delay:-8s; opacity:0.45; }
-.geo-shape:nth-child(4) { width:160px; height:160px; bottom:10%; right:4%;animation-duration:30s; animation-delay:-12s;opacity:0.25; }
-.geo-shape.circle { border-radius:50%; border-color:rgba(26,39,68,0.1); }
-.geo-shape:nth-child(5) { width:200px; height:200px; top:35%; right:2%;  animation-duration:36s; animation-delay:-6s; border-radius:50%; opacity:0.2; }
-@keyframes geoFloat {
-  0%   { transform: rotate(0deg) translateY(0px); }
-  33%  { transform: rotate(120deg) translateY(-18px); }
-  66%  { transform: rotate(240deg) translateY(8px); }
-  100% { transform: rotate(360deg) translateY(0px); }
-}
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--navy);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-/* ── Left panel ── */
-.left-panel {
-  position: fixed; top:0; left:0;
-  width: 340px; height: 100vh;
-  z-index: 1;
-  display: flex; flex-direction: column;
-  justify-content: center; align-items: flex-start;
-  padding: 60px 44px;
-  background: linear-gradient(145deg, var(--navy) 0%, #0f1d3a 100%);
-  border-right: 1px solid rgba(201,168,76,0.15);
-}
-.left-panel::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='rgba(201,168,76,0.1)'/%3E%3C/svg%3E") repeat;
-  pointer-events: none;
-}
+    /* ── Background ── */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
 
-.institution-badge {
-  display: flex; align-items: center; gap: 14px;
-  margin-bottom: 36px;
-  animation: fadeSlideUp 0.8s ease both;
-}
-.badge-icon {
-  width: 52px; height: 52px;
-  background: linear-gradient(135deg, var(--gold), var(--gold2));
-  border-radius: 13px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 25px;
-  box-shadow: 0 4px 20px rgba(201,168,76,0.4);
-  flex-shrink: 0;
-}
-.institution-name {
-  font-family: 'Playfair Display', serif;
-  color: var(--white); font-size: 14px; font-weight: 600;
-  letter-spacing: 1.8px; text-transform: uppercase; line-height: 1.4;
-}
-.institution-name span {
-  display: block; color: var(--gold2); font-size: 10px;
-  letter-spacing: 2.5px; font-weight: 400; margin-top: 3px;
-  font-family: 'DM Sans', sans-serif;
-}
-.left-divider {
-  width: 44px; height: 2px;
-  background: linear-gradient(90deg, var(--gold), transparent);
-  margin-bottom: 26px;
-  animation: fadeSlideUp 0.8s 0.1s ease both;
-}
-.left-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 32px; font-weight: 700;
-  color: var(--white); line-height: 1.25;
-  margin-bottom: 16px;
-  animation: fadeSlideUp 0.8s 0.2s ease both;
-}
-.left-title em { color: var(--gold2); font-style: normal; }
-.left-desc {
-  font-size: 13px; color: rgba(255,255,255,0.55);
-  line-height: 1.8; margin-bottom: 36px;
-  animation: fadeSlideUp 0.8s 0.3s ease both;
-}
-.left-steps {
-  display: flex; flex-direction: column; gap: 16px;
-  animation: fadeSlideUp 0.8s 0.4s ease both;
-}
-.step-item { display: flex; align-items: flex-start; gap: 13px; }
-.step-num {
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 1.5px solid var(--gold);
-  color: var(--gold2); font-size: 12px; font-weight: 600;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; margin-top: 2px;
-}
-.step-text { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.55; }
-.step-text strong {
-  color: rgba(255,255,255,0.92); font-weight: 500;
-  display: block; margin-bottom: 2px;
-}
-.left-footer {
-  position: absolute; bottom: 32px; left: 44px;
-  font-size: 10.5px; color: rgba(255,255,255,0.2);
-  letter-spacing: 1px;
-  animation: fadeSlideUp 0.8s 0.5s ease both;
-}
+    .bg-canvas::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 20%, rgba(201, 168, 76, 0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 70% at 90% 80%, rgba(26, 39, 68, 0.06) 0%, transparent 60%);
+    }
 
-/* ── Right content ── */
-.right-content {
-  margin-left: 340px;
-  min-height: 100vh;
-  padding: 36px 44px 60px;
-  position: relative; z-index: 2;
-}
+    .geo-shape {
+      position: absolute;
+      border: 1px solid rgba(201, 168, 76, 0.18);
+      border-radius: 2px;
+      animation: geoFloat linear infinite;
+    }
 
-/* ── Navbar ── */
-.navbar {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 30px; padding-bottom: 18px;
-  border-bottom: 1px solid var(--border);
-  animation: fadeSlideUp 0.6s ease both;
-}
-.nav-brand {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px; color: var(--navy); font-weight: 700;
-}
-.nav-brand span { color: var(--gold); }
-.nav-links { display: flex; gap: 4px; }
-.nav-links a {
-  color: var(--muted); text-decoration: none;
-  font-size: 13.5px; font-weight: 500;
-  padding: 7px 14px; border-radius: 8px;
-  transition: all 0.2s;
-}
-.nav-links a:hover { background: rgba(26,39,68,0.07); color: var(--navy); }
-.nav-links a.active { background: var(--navy); color: white; }
+    .geo-shape:nth-child(1) {
+      width: 80px;
+      height: 80px;
+      top: 8%;
+      left: 5%;
+      animation-duration: 18s;
+      opacity: 0.5;
+    }
 
-/* ── Notice bar ── */
-.notice-bar {
-  background: linear-gradient(90deg, var(--red), #a93226);
-  color: white; padding: 11px 18px;
-  border-radius: 10px; overflow: hidden;
-  margin-bottom: 26px; font-size: 12.5px;
-  font-weight: 600; letter-spacing: 0.3px;
-  display: flex; align-items: center; gap: 12px;
-  box-shadow: 0 4px 16px rgba(192,57,43,0.22);
-  animation: fadeSlideUp 0.6s 0.1s ease both;
-}
-.notice-bar::before { content: '🔒'; font-size: 15px; flex-shrink: 0; }
-.notice-marquee { overflow: hidden; flex: 1; }
-.notice-text {
-  display: inline-block; white-space: nowrap;
-  animation: scrollText 20s linear infinite;
-}
-@keyframes scrollText {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
+    .geo-shape:nth-child(2) {
+      width: 120px;
+      height: 120px;
+      top: 20%;
+      right: 6%;
+      animation-duration: 24s;
+      animation-delay: -4s;
+      opacity: 0.35;
+    }
 
-/* ── Page header ── */
-.page-header {
-  margin-bottom: 26px;
-  animation: fadeSlideUp 0.6s 0.15s ease both;
-}
-.breadcrumb {
-  font-size: 12px; color: var(--muted);
-  margin-bottom: 8px;
-  display: flex; align-items: center; gap: 6px;
-}
-.breadcrumb a { color: var(--gold); text-decoration: none; }
-.page-header h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px; font-weight: 700; color: var(--navy); margin-bottom: 5px;
-}
-.page-header p { font-size: 13.5px; color: var(--muted); line-height: 1.65; max-width: 500px; }
+    .geo-shape:nth-child(3) {
+      width: 50px;
+      height: 50px;
+      bottom: 25%;
+      left: 8%;
+      animation-duration: 14s;
+      animation-delay: -8s;
+      opacity: 0.45;
+    }
 
-/* ── Form card ── */
-.form-card {
-  background: var(--white);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(26,39,68,0.07);
-  overflow: hidden;
-  animation: fadeSlideUp 0.7s 0.2s ease both;
-}
-.form-section-header {
-  display: flex; align-items: center; gap: 12px;
-  padding: 18px 28px 15px;
-  border-bottom: 1px solid var(--border);
-  background: #f8fafd;
-}
-.section-icon {
-  width: 36px; height: 36px;
-  background: linear-gradient(135deg, var(--navy), var(--navy2));
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; flex-shrink: 0;
-}
-.section-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 16px; font-weight: 600; color: var(--navy);
-}
-.section-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
-.form-body { padding: 28px; }
+    .geo-shape:nth-child(4) {
+      width: 160px;
+      height: 160px;
+      bottom: 10%;
+      right: 4%;
+      animation-duration: 30s;
+      animation-delay: -12s;
+      opacity: 0.25;
+    }
 
-/* ── Fields ── */
-.field-group { margin-bottom: 20px; }
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .geo-shape.circle {
+      border-radius: 50%;
+      border-color: rgba(26, 39, 68, 0.1);
+    }
 
-label {
-  display: block; font-size: 12px; font-weight: 600;
-  color: var(--navy); margin-bottom: 7px;
-  letter-spacing: 0.5px; text-transform: uppercase;
-}
-label .optional {
-  font-size: 10.5px; color: var(--muted);
-  text-transform: none; font-weight: 400; letter-spacing: 0; margin-left: 4px;
-}
-label .required-star { color: var(--red); margin-left: 3px; }
+    .geo-shape:nth-child(5) {
+      width: 200px;
+      height: 200px;
+      top: 35%;
+      right: 2%;
+      animation-duration: 36s;
+      animation-delay: -6s;
+      border-radius: 50%;
+      opacity: 0.2;
+    }
 
-input[type="text"],
-input[type="date"],
-textarea,
-select {
-  width: 100%; padding: 11px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px; color: var(--navy);
-  background: #fafbfd;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-  outline: none;
-  -webkit-appearance: none; /* consistent across browsers */
-  appearance: none;
-}
-input[type="text"]:focus,
-input[type="date"]:focus,
-textarea:focus {
-  border-color: var(--navy); background: var(--white);
-  box-shadow: 0 0 0 4px rgba(26,39,68,0.07);
-}
-input[readonly] {
-  background: #f0f2f7; color: var(--muted);
-  cursor: not-allowed; border-style: dashed;
-}
-textarea { resize: vertical; min-height: 88px; line-height: 1.6; }
-input::placeholder, textarea::placeholder { color: #b0b8c9; font-size: 13.5px; }
+    @keyframes geoFloat {
+      0% {
+        transform: rotate(0deg) translateY(0px);
+      }
 
-/* Date field — highlight it's editable */
-input[type="date"]#dateField {
-  border-color: rgba(201,168,76,0.5);
-  background: rgba(201,168,76,0.04);
-  cursor: pointer;
-}
-input[type="date"]#dateField:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 4px rgba(201,168,76,0.12);
-}
+      33% {
+        transform: rotate(120deg) translateY(-18px);
+      }
 
-.field-hint { font-size: 11.5px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
-.field-hint.editable-note {
-  color: #8a6b1e; font-weight: 500;
-}
+      66% {
+        transform: rotate(240deg) translateY(8px);
+      }
 
-/* ── Divider ── */
-.form-divider {
-  display: flex; align-items: center; gap: 14px;
-  margin: 24px 0 20px;
-}
-.form-divider span {
-  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--muted); white-space: nowrap;
-}
-.divider-line { flex: 1; height: 1px; background: var(--border); }
+      100% {
+        transform: rotate(360deg) translateY(0px);
+      }
+    }
 
-/* ── Upload area ── */
-.upload-area {
-  border: 2px dashed var(--border);
-  border-radius: 12px; padding: 26px 20px;
-  text-align: center; background: #f9fafc;
-  cursor: pointer; transition: all 0.2s;
-  position: relative; overflow: hidden;
-}
-.upload-area:hover { border-color: var(--gold); background: rgba(201,168,76,0.04); }
-.upload-area input[type="file"] {
-  position: absolute; inset: 0; opacity: 0;
-  cursor: pointer; width: 100%; height: 100%;
-  padding: 0; border: none; background: transparent;
-}
-.upload-icon { font-size: 30px; margin-bottom: 10px; display: block; }
-.upload-title { font-weight: 600; font-size: 14px; color: var(--navy); margin-bottom: 4px; }
-.upload-sub { font-size: 12px; color: var(--muted); }
-#preview {
-  display: none; width: 130px; height: 130px;
-  object-fit: cover; border-radius: 12px;
-  border: 3px solid var(--gold);
-  box-shadow: 0 4px 20px rgba(201,168,76,0.2);
-  margin: 14px auto 0;
-}
+    /* ── Left panel ── */
+    .left-panel {
+      position: sticky;
+      top: calc(clamp(74px, 5.5vw, 86px) + 20px);
+      width: 100%;
+      max-width: 340px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: clamp(28px, 3vw, 44px) clamp(20px, 2vw, 30px);
+      background: linear-gradient(145deg, var(--navy) 0%, #0f1d3a 100%);
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 16px 48px rgba(13, 27, 42, 0.2);
+      box-sizing: border-box;
+    }
 
-/* ── Submit button ── */
-.btn-submit {
-  width: 100%; padding: 15px; margin-top: 8px;
-  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
-  color: white; border: none; border-radius: 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px; font-weight: 600; letter-spacing: 0.5px;
-  cursor: pointer; transition: all 0.25s;
-  position: relative; overflow: hidden;
-  box-shadow: 0 6px 24px rgba(26,39,68,0.3);
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-}
-.btn-submit::before {
-  content: ''; position: absolute; top: 0; left: -100%;
-  width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
-  transition: left 0.5s;
-}
-.btn-submit:hover::before { left: 100%; }
-.btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(26,39,68,0.38); }
-.btn-submit:active { transform: translateY(0); }
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='rgba(201,168,76,0.1)'/%3E%3C/svg%3E") repeat;
+      pointer-events: none;
+    }
 
-/* ── Info box ── */
-.info-box {
-  background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.04));
-  border: 1px solid rgba(201,168,76,0.3);
-  border-radius: 12px; padding: 16px 18px;
-  margin-top: 20px;
-  display: flex; gap: 12px; align-items: flex-start;
-}
-.info-box-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-.info-box-text { font-size: 12.5px; color: var(--navy); line-height: 1.65; }
-.info-box-text strong {
-  font-weight: 600; display: block; margin-bottom: 3px; color: #8a6b1e;
-}
+    .institution-badge {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 36px;
+      animation: fadeSlideUp 0.8s ease both;
+    }
 
-#google_translate_element { display: none; }
+    .badge-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      box-shadow: 0 4px 20px rgba(201, 168, 76, 0.4);
+      flex-shrink: 0;
+    }
 
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+    .institution-name {
+      font-family: 'Playfair Display', serif;
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      line-height: 1.4;
+    }
 
-@media (max-width: 960px) {
-  .left-panel { display: none; }
-  .right-content { margin-left: 0; padding: 24px 20px 48px; }
-  .field-row { grid-template-columns: 1fr; }
-}
-@media (max-width: 500px) {
-  .navbar { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .right-content { padding: 18px 14px 48px; }
-  .form-body { padding: 20px; }
-}
-</style>
+    .institution-name span {
+      display: block;
+      color: var(--gold2);
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      font-weight: 400;
+      margin-top: 3px;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .left-divider {
+      width: 44px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      margin-bottom: 26px;
+      animation: fadeSlideUp 0.8s 0.1s ease both;
+    }
+
+    .left-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.25;
+      margin-bottom: 16px;
+      animation: fadeSlideUp 0.8s 0.2s ease both;
+    }
+
+    .left-title em {
+      color: var(--gold2);
+      font-style: normal;
+    }
+
+    .left-desc {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.55);
+      line-height: 1.8;
+      margin-bottom: 36px;
+      animation: fadeSlideUp 0.8s 0.3s ease both;
+    }
+
+    .left-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: fadeSlideUp 0.8s 0.4s ease both;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gold);
+      color: var(--gold2);
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-text {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.55;
+    }
+
+    .step-text strong {
+      color: rgba(255, 255, 255, 0.92);
+      font-weight: 500;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .left-footer {
+      margin-top: 28px;
+      font-size: 10.5px;
+      color: rgba(255, 255, 255, 0.35);
+      letter-spacing: 0.8px;
+      animation: fadeSlideUp 0.8s 0.5s ease both;
+    }
+
+    /* ── Main Layout Container ── */
+    .report-layout-container {
+      width: min(100% - 32px, 1340px);
+      max-width: 1340px;
+      margin: clamp(20px, 2.5vw, 36px) auto 60px;
+      padding: 0;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: clamp(20px, 2.2vw, 36px);
+      align-items: start;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ── Right content ── */
+    .right-content {
+      margin-left: 0;
+      min-width: 0;
+      width: 100%;
+      padding: 0;
+      position: relative;
+      z-index: 2;
+      box-sizing: border-box;
+    }
+
+    /* ── Notice bar ── */
+    .notice-bar {
+      background: linear-gradient(90deg, var(--red), #a93226);
+      color: white;
+      padding: 11px 18px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 26px;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 16px rgba(192, 57, 43, 0.22);
+      animation: fadeSlideUp 0.6s 0.1s ease both;
+    }
+
+    .notice-bar::before {
+      content: '🔒';
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .notice-marquee {
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .notice-text {
+      display: inline-block;
+      white-space: nowrap;
+      animation: scrollText 20s linear infinite;
+    }
+
+    @keyframes scrollText {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      margin-bottom: 26px;
+      animation: fadeSlideUp 0.6s 0.15s ease both;
+    }
+
+    .breadcrumb {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .breadcrumb a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 5px;
+    }
+
+    .page-header p {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 500px;
+    }
+
+    /* ── Form card ── */
+    .form-card {
+      background: var(--white);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(26, 39, 68, 0.07);
+      overflow: hidden;
+      animation: fadeSlideUp 0.7s 0.2s ease both;
+    }
+
+    .form-section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 28px 15px;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafd;
+    }
+
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--navy), var(--navy2));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    .section-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .form-body {
+      padding: 28px;
+    }
+
+    /* ── Fields ── */
+    .field-group {
+      margin-bottom: 20px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 7px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    label .optional {
+      font-size: 10.5px;
+      color: var(--muted);
+      text-transform: none;
+      font-weight: 400;
+      letter-spacing: 0;
+      margin-left: 4px;
+    }
+
+    label .required-star {
+      color: var(--red);
+      margin-left: 3px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--navy);
+      background: #fafbfd;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      outline: none;
+      -webkit-appearance: none;
+      /* consistent across browsers */
+      appearance: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    textarea:focus {
+      border-color: var(--navy);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(26, 39, 68, 0.07);
+    }
+
+    input[readonly] {
+      background: #f0f2f7;
+      color: var(--muted);
+      cursor: not-allowed;
+      border-style: dashed;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 88px;
+      line-height: 1.6;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #b0b8c9;
+      font-size: 13.5px;
+    }
+
+    /* Date field — highlight it's editable */
+    input[type="date"]#dateField {
+      border-color: rgba(201, 168, 76, 0.5);
+      background: rgba(201, 168, 76, 0.04);
+      cursor: pointer;
+    }
+
+    input[type="date"]#dateField:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.12);
+    }
+
+    .field-hint {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 5px;
+      line-height: 1.5;
+    }
+
+    .field-hint.editable-note {
+      color: #8a6b1e;
+      font-weight: 500;
+    }
+
+    /* ── Divider ── */
+    .form-divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 24px 0 20px;
+    }
+
+    .form-divider span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Upload area ── */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 26px 20px;
+      text-align: center;
+      background: #f9fafc;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-area:hover {
+      border-color: var(--gold);
+      background: rgba(201, 168, 76, 0.04);
+    }
+
+    .upload-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: none;
+      background: transparent;
+    }
+
+    .upload-icon {
+      font-size: 30px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .upload-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .upload-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    #preview {
+      display: none;
+      width: 130px;
+      height: 130px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 3px solid var(--gold);
+      box-shadow: 0 4px 20px rgba(201, 168, 76, 0.2);
+      margin: 14px auto 0;
+    }
+
+    /* ── Submit button ── */
+    .btn-submit {
+      width: 100%;
+      padding: 15px;
+      margin-top: 8px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 24px rgba(26, 39, 68, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-submit:hover::before {
+      left: 100%;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(26, 39, 68, 0.38);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* ── Info box ── */
+    .info-box {
+      background: linear-gradient(135deg, rgba(201, 168, 76, 0.08), rgba(201, 168, 76, 0.04));
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .info-box-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .info-box-text {
+      font-size: 12.5px;
+      color: var(--navy);
+      line-height: 1.65;
+    }
+
+    .info-box-text strong {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 3px;
+      color: #8a6b1e;
+    }
+
+    #google_translate_element {
+      display: none;
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .report-layout-container {
+        grid-template-columns: 1fr;
+        margin: 16px auto 40px;
+        width: min(100% - 24px, 1340px);
+      }
+
+      .left-panel {
+        position: static;
+        max-height: none;
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-body {
+        padding: 20px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="bg-canvas">
-  <div class="geo-shape"></div>
-  <div class="geo-shape"></div>
-  <div class="geo-shape"></div>
-  <div class="geo-shape"></div>
-  <div class="geo-shape circle"></div>
-</div>
-
-<!-- Left branding panel -->
-<div class="left-panel">
-  <div class="institution-badge">
-    <div class="badge-icon">🎓</div>
-    <div class="institution-name">
-      MITS
-      <span>Madanapalle Institute of Technology &amp; Science</span>
-      <span>Deemed to be University</span>
-    </div>
+  <div class="bg-canvas">
+    <div class="geo-shape"></div>
+    <div class="geo-shape"></div>
+    <div class="geo-shape"></div>
+    <div class="geo-shape"></div>
+    <div class="geo-shape circle"></div>
   </div>
-  <div class="left-divider"></div>
-  <h2 class="left-title">
-    Found something?<br>
-    Help us <em>reunite</em><br>it with its owner.
-  </h2>
-  <p class="left-desc">
-    The MITS Lost &amp; Found portal ensures every item reported is securely logged and swiftly returned to its rightful owner within the campus community.
-  </p>
-  <div class="left-steps">
-    <div class="step-item">
-      <div class="step-num">1</div>
-      <div class="step-text"><strong>Describe the item</strong>Provide clear details — color, brand, features.</div>
-    </div>
-    <div class="step-item">
-      <div class="step-num">2</div>
-      <div class="step-text"><strong>Upload a photo</strong>A clear image helps owners identify their belongings.</div>
-    </div>
-    <div class="step-item">
-      <div class="step-num">3</div>
-      <div class="step-text"><strong>Submit to Admin</strong>Our staff will verify and notify the owner.</div>
-    </div>
-  </div>
-  <div class="left-footer">MITS · FindMyThing Portal · Academic Year 2024–25</div>
-</div>
 
-<!-- Right content -->
-<div class="right-content">
-
+  <!-- ===== GLOBAL NAVBAR (IDENTICAL TO INDEX) ===== -->
   <nav class="navbar" id="mainNavbar"></nav>
 
-  <div class="notice-bar">
-    <div class="notice-marquee">
-      <span class="notice-text">
-        ⚠ SECURITY NOTICE: Your phone number is strictly confidential and will only be visible to authorized staff (Admin &amp; Manager). Any misuse is strictly prohibited and subject to disciplinary action under MITS Code of Conduct. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⚠ SECURITY NOTICE: Your phone number is strictly confidential and will only be visible to authorized staff (Admin &amp; Manager). Any misuse is strictly prohibited and subject to disciplinary action under MITS Code of Conduct.
-      </span>
-    </div>
-  </div>
+  <!-- ===== REPORT FOUND MAIN CONTAINER ===== -->
+  <div class="report-layout-container">
 
-  <div class="page-header">
-    <div class="breadcrumb">
-      <a href="/">Portal Home</a>
-      <span>›</span>
-      <span>Report Found Item</span>
-    </div>
-    <h1>Report a Found Item</h1>
-    <p>Please fill in the details below accurately. All submissions are reviewed by the administrative office and logged into the central lost &amp; found registry.</p>
-  </div>
+    <!-- Left branding panel -->
+    <aside class="left-panel">
+      <div class="institution-badge">
+        <div class="badge-icon">🎓</div>
+        <div class="institution-name">
+          MITS
+          <span>Madanapalle Institute of Technology &amp; Science</span>
+          <span>Deemed to be University</span>
+        </div>
+      </div>
+      <div class="left-divider"></div>
+      <h2 class="left-title">
+        Found something?<br>
+        Help us <em>reunite</em><br>it with its owner.
+      </h2>
+      <p class="left-desc">
+        The MITS Lost &amp; Found portal ensures every item reported is securely logged and swiftly returned to its
+        rightful owner within the campus community.
+      </p>
+      <div class="left-steps">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Describe the item</strong>Provide clear details — color, brand, features.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Upload a photo</strong>A clear image helps owners identify their belongings.
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Submit to Admin</strong>Our staff will verify and notify the owner.</div>
+        </div>
+      </div>
+      <div class="left-footer">MITS · FindMyThing Portal · Academic Year 2024–25</div>
+    </aside>
 
-  <div class="form-card">
-    <div class="form-section-header">
-      <div class="section-icon">🤝</div>
-      <div>
-        <div class="section-title">Handover Information</div>
-        <div class="section-sub">Details of who found and who received the item</div>
+    <!-- Right content -->
+    <main class="right-content">
+
+    <div class="notice-bar">
+      <div class="notice-marquee">
+        <span class="notice-text">
+          ⚠ SECURITY NOTICE: Your phone number is strictly confidential and will only be visible to authorized staff
+          (Admin &amp; Manager). Any misuse is strictly prohibited and subject to disciplinary action under MITS Code of
+          Conduct. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⚠ SECURITY NOTICE: Your phone number is strictly confidential
+          and will only be visible to authorized staff (Admin &amp; Manager). Any misuse is strictly prohibited and
+          subject to disciplinary action under MITS Code of Conduct.
+        </span>
       </div>
     </div>
 
-    <div class="form-body">
-      <form id="foundForm" action="/found" method="POST" enctype="multipart/form-data">
-
-        <div class="field-row">
-          <div class="field-group">
-            <label>Handed Over By <span class="optional">(Optional)</span></label>
-            <input type="text" name="handedBy" placeholder="e.g. Ravi Kumar, Cleaner (Block C)">
-          </div>
-          <div class="field-group">
-            <label>Handed Over To <span class="optional">(Optional)</span></label>
-            <input type="text" name="handedTo" placeholder="e.g. Admin Staff / Student Name">
-          </div>
-        </div>
-
-        <div class="form-divider">
-          <div class="divider-line"></div>
-          <span>📦 Item Details</span>
-          <div class="divider-line"></div>
-        </div>
-
-        <div class="field-group">
-          <label>Name of Item <span class="required-star">*</span></label>
-          <input type="text" name="name" placeholder="e.g. Samsung Galaxy A54, Blue Water Bottle, Student ID Card" required>
-          <div class="field-hint">Be as specific as possible — include brand name if known.</div>
-        </div>
-
-        <div class="field-group">
-          <label>Description <span class="required-star">*</span></label>
-          <textarea name="description" placeholder="Describe the item in detail — color, size, brand, any distinctive marks, condition when found..." required></textarea>
-          <div class="field-hint">Example: "Black Samsung phone with a cracked back cover and a red panda sticker."</div>
-        </div>
-
-        <div class="form-divider">
-          <div class="divider-line"></div>
-          <span>📍 Location &amp; Date</span>
-          <div class="divider-line"></div>
-        </div>
-
-        <div class="field-row">
-          <div class="field-group">
-            <label>Submit Location</label>
-            <input type="text" name="location" value="MITS Admin Office" readonly>
-            <div class="field-hint">All found items must be submitted to the Admin Office.</div>
-          </div>
-          <div class="field-group">
-            <label>Date Found <span class="required-star">*</span></label>
-            <input type="date" name="dateFound" id="dateField" required>
-            <div class="field-hint editable-note">✏️ Auto-set to today — change if item was found earlier.</div>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label>Found Location <span class="required-star">*</span></label>
-          <textarea name="foundlocation" placeholder="Specify where you found this item — e.g. Block B Corridor, Canteen near Gate 2, Main Parking Area, Library Reading Room..." required style="min-height:70px;"></textarea>
-        </div>
-
-        <div class="form-divider">
-          <div class="divider-line"></div>
-          <span>📞 Contact &amp; Image</span>
-          <div class="divider-line"></div>
-        </div>
-
-        <div class="field-group">
-          <label>Phone Number <span class="optional">(Optional — Admin use only)</span></label>
-          <input type="text" name="contact" placeholder="Enter your 10-digit mobile number">
-          <div class="field-hint">Your contact details are encrypted and visible only to authorized staff. Never shared publicly.</div>
-        </div>
-
-        <div class="field-group">
-          <label>Upload Image <span class="required-star">*</span></label>
-          <div class="upload-area" id="uploadArea">
-            <input type="file" id="imageInput" name="image" accept="image/*" required>
-            <span class="upload-icon">📷</span>
-            <div class="upload-title">Click to upload or drag &amp; drop</div>
-            <div class="upload-sub">JPG, PNG or WEBP — Maximum file size: 2MB</div>
-            <img id="preview" alt="Item preview">
-          </div>
-          <div class="field-hint">A clear, well-lit photo greatly increases the chances of identification.</div>
-        </div>
-
-        <div class="info-box">
-          <span class="info-box-icon">📋</span>
-          <div class="info-box-text">
-            <strong>Declaration by Submitter</strong>
-            By submitting this form, I confirm that the information provided is accurate and truthful to the best of my knowledge. I understand that providing false information may result in disciplinary action as per the MITS Student Code of Conduct.
-          </div>
-        </div>
-
-        <button type="submit" class="btn-submit">
-          <span>📨</span>
-          Submit Found Item Report
-        </button>
-
-      </form>
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="/">Portal Home</a>
+        <span>›</span>
+        <span>Report Found Item</span>
+      </div>
+      <h1>Report a Found Item</h1>
+      <p>Please fill in the details below accurately. All submissions are reviewed by the administrative office and
+        logged into the central lost &amp; found registry.</p>
     </div>
+
+    <div class="form-card">
+      <div class="form-section-header">
+        <div class="section-icon">🤝</div>
+        <div>
+          <div class="section-title">Handover Information</div>
+          <div class="section-sub">Details of who found and who received the item</div>
+        </div>
+      </div>
+
+      <div class="form-body">
+        <form id="foundForm" action="/found" method="POST" enctype="multipart/form-data">
+
+          <div class="field-row">
+            <div class="field-group">
+              <label>Handed Over By <span class="optional">(Optional)</span></label>
+              <input type="text" name="handedBy" placeholder="e.g. Ravi Kumar, Cleaner (Block C)">
+            </div>
+            <div class="field-group">
+              <label>Handed Over To <span class="optional">(Optional)</span></label>
+              <input type="text" name="handedTo" placeholder="e.g. Admin Staff / Student Name">
+            </div>
+          </div>
+
+          <div class="form-divider">
+            <div class="divider-line"></div>
+            <span>📦 Item Details</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <div class="field-group">
+            <label>Name of Item <span class="required-star">*</span></label>
+            <input type="text" name="name" placeholder="e.g. Samsung Galaxy A54, Blue Water Bottle, Student ID Card"
+              required>
+            <div class="field-hint">Be as specific as possible — include brand name if known.</div>
+          </div>
+
+          <div class="field-group">
+            <label>Description <span class="required-star">*</span></label>
+            <textarea name="description"
+              placeholder="Describe the item in detail — color, size, brand, any distinctive marks, condition when found..."
+              required></textarea>
+            <div class="field-hint">Example: "Black Samsung phone with a cracked back cover and a red panda sticker."
+            </div>
+          </div>
+
+          <div class="form-divider">
+            <div class="divider-line"></div>
+            <span>📍 Location &amp; Date</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label>Submit Location</label>
+              <input type="text" name="location" value="MITS Admin Office" readonly>
+              <div class="field-hint">All found items must be submitted to the Admin Office.</div>
+            </div>
+            <div class="field-group">
+              <label>Date Found <span class="required-star">*</span></label>
+              <input type="date" name="dateFound" id="dateField" required>
+              <div class="field-hint editable-note">✏️ Auto-set to today — change if item was found earlier.</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Found Location <span class="required-star">*</span></label>
+            <textarea name="foundlocation"
+              placeholder="Specify where you found this item — e.g. Block B Corridor, Canteen near Gate 2, Main Parking Area, Library Reading Room..."
+              required style="min-height:70px;"></textarea>
+          </div>
+
+          <div class="form-divider">
+            <div class="divider-line"></div>
+            <span>📞 Contact &amp; Image</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <div class="field-group">
+            <label>Phone Number <span class="optional">(Optional — Admin use only)</span></label>
+            <input type="text" name="contact" placeholder="Enter your 10-digit mobile number">
+            <div class="field-hint">Your contact details are encrypted and visible only to authorized staff. Never
+              shared publicly.</div>
+          </div>
+
+          <div class="field-group">
+            <label>Upload Image <span class="required-star">*</span></label>
+            <div class="upload-area" id="uploadArea">
+              <input type="file" id="imageInput" name="image" accept="image/*" required>
+              <span class="upload-icon">📷</span>
+              <div class="upload-title">Click to upload or drag &amp; drop</div>
+              <div class="upload-sub">JPG, PNG or WEBP — Maximum file size: 2MB</div>
+              <img id="preview" alt="Item preview">
+            </div>
+            <div class="field-hint">A clear, well-lit photo greatly increases the chances of identification.</div>
+          </div>
+
+          <div class="info-box">
+            <span class="info-box-icon">📋</span>
+            <div class="info-box-text">
+              <strong>Declaration by Submitter</strong>
+              By submitting this form, I confirm that the information provided is accurate and truthful to the best of
+              my knowledge. I understand that providing false information may result in disciplinary action as per the
+              MITS Student Code of Conduct.
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            <span>📨</span>
+            Submit Found Item Report
+          </button>
+
+        </form>
+      </div>
+    </div>
+
+    </main>
   </div>
-</div>
 
-<script>
-// ── Bulletproof date auto-set ──
-// Uses getFullYear/getMonth/getDate on local time — no timezone issues
-(function () {
-  var d = new Date();
-  var yyyy = d.getFullYear();
-  var mm   = ('0' + (d.getMonth() + 1)).slice(-2);  // zero-pad month
-  var dd   = ('0' + d.getDate()).slice(-2);           // zero-pad day
-  var today = yyyy + '-' + mm + '-' + dd;            // "YYYY-MM-DD"
+  <script>
+    // ── Bulletproof date auto-set ──
+    // Uses getFullYear/getMonth/getDate on local time — no timezone issues
+    (function () {
+      var d = new Date();
+      var yyyy = d.getFullYear();
+      var mm = ('0' + (d.getMonth() + 1)).slice(-2);  // zero-pad month
+      var dd = ('0' + d.getDate()).slice(-2);           // zero-pad day
+      var today = yyyy + '-' + mm + '-' + dd;            // "YYYY-MM-DD"
 
-  var dateField = document.getElementById('dateField');
-  dateField.value = today;   // set to today
-  dateField.max   = today;   // prevent future dates
-  // min is intentionally NOT set — user can pick any past date
-})();
+      var dateField = document.getElementById('dateField');
+      dateField.value = today;   // set to today
+      dateField.max = today;   // prevent future dates
+      // min is intentionally NOT set — user can pick any past date
+    })();
 
-// ── Image preview with 2MB guard ──
-document.getElementById('imageInput').addEventListener('change', function (e) {
-  var file = e.target.files[0];
-  if (!file) return;
-  if (file.size > 2 * 1024 * 1024) {
-    alert('⚠ Image size must be less than 2MB. Please compress and try again.');
-    e.target.value = '';
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function (ev) {
-    var preview = document.getElementById('preview');
-    preview.src = ev.target.result;
-    preview.style.display = 'block';
-    document.querySelector('.upload-title').textContent = 'Image selected ✓';
-    document.querySelector('.upload-sub').textContent   = file.name;
-  };
-  reader.readAsDataURL(file);
-});
+    // ── Image preview with 2MB guard ──
+    document.getElementById('imageInput').addEventListener('change', function (e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        alert('⚠ Image size must be less than 2MB. Please compress and try again.');
+        e.target.value = '';
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function (ev) {
+        var preview = document.getElementById('preview');
+        preview.src = ev.target.result;
+        preview.style.display = 'block';
+        document.querySelector('.upload-title').textContent = 'Image selected ✓';
+        document.querySelector('.upload-sub').textContent = file.name;
+      };
+      reader.readAsDataURL(file);
+    });
 
-// ── Form validation ──
-document.getElementById('foundForm').addEventListener('submit', function (e) {
-  var val   = document.querySelector('input[name="dateFound"]').value;
-  if (!val) {
-    e.preventDefault();
-    alert('⚠ Please select a date.');
-    return;
-  }
-  // Parse the YYYY-MM-DD string safely (avoid timezone shift from new Date(string))
-  var parts = val.split('-');
-  var chosen = new Date(+parts[0], +parts[1] - 1, +parts[2]);
-  var today  = new Date();
-  today.setHours(0, 0, 0, 0);
-  if (chosen > today) {
-    e.preventDefault();
-    alert('⚠ Future date is not allowed. Please select today\'s date or an earlier date.');
-    return;
-  }
-  this.querySelectorAll('input[type=text], textarea').forEach(function (el) {
-    el.value = el.value.trim();
-  });
-});
+    // ── Form validation ──
+    document.getElementById('foundForm').addEventListener('submit', function (e) {
+      var val = document.querySelector('input[name="dateFound"]').value;
+      if (!val) {
+        e.preventDefault();
+        alert('⚠ Please select a date.');
+        return;
+      }
+      // Parse the YYYY-MM-DD string safely (avoid timezone shift from new Date(string))
+      var parts = val.split('-');
+      var chosen = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (chosen > today) {
+        e.preventDefault();
+        alert('⚠ Future date is not allowed. Please select today\'s date or an earlier date.');
+        return;
+      }
+      this.querySelectorAll('input[type=text], textarea').forEach(function (el) {
+        el.value = el.value.trim();
+      });
+    });
 
-// ── Upload drag highlight ──
-var area = document.getElementById('uploadArea');
-area.addEventListener('dragover',  function (e) { e.preventDefault(); area.style.borderColor = '#c9a84c'; });
-area.addEventListener('dragleave', function ()  { area.style.borderColor = ''; });
-area.addEventListener('drop',      function ()  { area.style.borderColor = ''; });
-</script>
+    // ── Upload drag highlight ──
+    var area = document.getElementById('uploadArea');
+    area.addEventListener('dragover', function (e) { e.preventDefault(); area.style.borderColor = '#c9a84c'; });
+    area.addEventListener('dragleave', function () { area.style.borderColor = ''; });
+    area.addEventListener('drop', function () { area.style.borderColor = ''; });
+  </script>
 
-<script src="/js/navbar.js"></script>
-<script src="/js/translate.js"></script>
-<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/translate.js"></script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
+
 </html>

@@ -32,6 +32,8 @@ const authRoutes = require("./routes/authRoutes");
 const itemRoutes = require("./routes/itemRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
+const pushRoutes = require("./routes/pushRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 // Error handler
 const errorHandler = require("./middleware/errorHandler");
@@ -158,6 +160,10 @@ app.use(itemRoutes);
 app.use(adminRoutes);
 
 app.use(userRoutes);
+
+app.use(pushRoutes);
+
+app.use(notificationRoutes);
 
 // ======================================================
 // GLOBAL ERROR HANDLER
