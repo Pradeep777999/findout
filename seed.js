@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 // Load environment variables
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/findmything";
+const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI || "mongodb://127.0.0.1:27017/findmything";
 
 async function seed() {
   try {

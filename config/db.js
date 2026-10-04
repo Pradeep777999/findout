@@ -83,27 +83,59 @@ async function initializeDatabase(db) {
   }
 }
 
+// Global connection cache for serverless environments (Vercel)
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+let dbInitialized = false;
+
 async function connectDB() {
-  const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
   if (!uri) {
-    throw new Error("MONGO_URI is not configured");
+    throw new Error("MONGODB_URI is not configured in environment variables");
+  }
+
+  if (cached.conn && mongoose.connection.readyState === 1) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    cached.promise = mongoose
+      .connect(uri, {
+        dbName: "findmything",
+        serverSelectionTimeoutMS: 15000,
+        maxPoolSize: 10
+      })
+      .then(async (m) => {
+        console.log(`MongoDB Connected: ${m.connection.name}`);
+        if (!dbInitialized) {
+          try {
+            await initializeDatabase(m.connection.db);
+            dbInitialized = true;
+          } catch (initErr) {
+            console.error("[Database Init] Warning:", initErr.message);
+          }
+        }
+        return m;
+      })
+      .catch((err) => {
+        cached.promise = null; // Clear so subsequent requests can retry
+        throw err;
+      });
   }
 
   try {
-    await mongoose.connect(uri, {
-      dbName: "findmything",
-      serverSelectionTimeoutMS: 30000
-    });
-
-    console.log(`MongoDB Connected: ${mongoose.connection.name}`);
-
-    await initializeDatabase(mongoose.connection.db);
-
+    cached.conn = await cached.promise;
   } catch (err) {
-    console.error("MongoDB Connection Error:", err);
+    cached.promise = null;
     throw err;
   }
+
+  return cached.conn;
 }
 
 module.exports = connectDB;

@@ -1,7 +1,11 @@
 const dns = require("dns");
 
-// Use public DNS servers
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
+// Use public DNS servers safely (for SRV lookup support)
+try {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+} catch (e) {
+  // Ignore if custom DNS cannot be set by environment
+}
 
 const express = require("express");
 const session = require("express-session");
@@ -47,9 +51,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const mongoUri =
-  process.env.MONGO_URI ||
   process.env.MONGODB_URI ||
-  "mongodb://127.0.0.1:27017/findmything";
+  process.env.MONGO_URI ||
+  (isProduction ? "" : "mongodb://127.0.0.1:27017/findmything");
 
 const isProduction =
   process.env.NODE_ENV === "production";
@@ -102,35 +106,37 @@ if (!fs.existsSync(uploadsDir)) {
 // SESSION
 // ======================================================
 
-app.use(
-  session({
-    secret:
-      process.env.SESSION_SECRET ||
-      "findmything_session_secret_default_key",
+const sessionConfig = {
+  secret:
+    process.env.SESSION_SECRET ||
+    "findmything_session_secret_default_key",
 
-    resave: false,
+  resave: false,
 
-    saveUninitialized: false,
+  saveUninitialized: false,
 
-    store: MongoStore.create({
-      mongoUrl: mongoUri,
-      dbName: "findmything",
-      collectionName: "sessions",
+  cookie: {
+    httpOnly: true,
 
-      ttl: 7 * 24 * 60 * 60
-    }),
+    secure: isProduction,
 
-    cookie: {
-      httpOnly: true,
+    sameSite: "lax",
 
-      secure: isProduction,
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  }
+};
 
-      sameSite: "lax",
+if (mongoUri) {
+  sessionConfig.store = MongoStore.create({
+    mongoUrl: mongoUri,
+    dbName: "findmything",
+    collectionName: "sessions",
+    ttl: 7 * 24 * 60 * 60,
+    autoRemove: "native"
+  });
+}
 
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    }
-  })
-);
+app.use(session(sessionConfig));
 
 // ======================================================
 // STATIC FILES
@@ -148,6 +154,28 @@ app.use(
     path.join(__dirname, "public/uploads")
   )
 );
+
+// Serve favicon explicitly to prevent 404s
+app.get(["/favicon.ico", "/favicon.png"], (req, res) => {
+  const faviconPath = path.join(__dirname, "public/favicon.ico");
+  if (fs.existsSync(faviconPath)) {
+    return res.sendFile(faviconPath);
+  }
+  return res.status(204).end();
+});
+
+// ======================================================
+// DATABASE CONNECTION MIDDLEWARE (SERVERLESS SAFE)
+// ======================================================
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error("Database connection unavailable for request:", err.message);
+  }
+  next();
+});
 
 // ======================================================
 // ROUTES
@@ -172,21 +200,21 @@ app.use(notificationRoutes);
 app.use(errorHandler);
 
 // ======================================================
-// DATABASE CONNECTION
+// LOCAL SERVER & BACKGROUND TASKS
 // ======================================================
 
-connectDB()
-  .then(() => {
+// Start local server and background timers ONLY when running directly
+if (require.main === module) {
 
-    console.log("Database connection initialized.");
+  connectDB()
+    .then(() => {
 
-    // Run migration after database connection
-    setTimeout(() => {
-      runStartupMigration();
-    }, 1000);
+      console.log("Database connection initialized.");
 
-    // Start local server only when running directly
-    if (require.main === module) {
+      // Run migration after database connection
+      setTimeout(() => {
+        runStartupMigration();
+      }, 1000);
 
       app.listen(PORT, () => {
 
@@ -199,94 +227,88 @@ connectDB()
 
       });
 
-    }
+    })
+    .catch((err) => {
 
-  })
-  .catch((err) => {
-
-    console.error(
-      "Failed to initialize database:",
-      err
-    );
-
-  });
-
-// ======================================================
-// AUTO DELETE OLD COLLECTED ITEMS
-// ======================================================
-
-setInterval(async () => {
-
-  try {
-
-    const date = new Date();
-
-    date.setMonth(
-      date.getMonth() - 1
-    );
-
-    await Collected.deleteMany({
-      collectedAt: {
-        $lt: date
-      }
-    });
-
-    console.log(
-      "Auto delete: Old collected items checked."
-    );
-
-  } catch (err) {
-
-    console.error(
-      "Auto delete collected interval error:",
-      err.message
-    );
-
-  }
-
-}, 86400000);
-
-// ======================================================
-// AUTO CYCLE RESET
-// ======================================================
-
-let lastCycle = getCurrentCycle();
-
-setInterval(async () => {
-
-  try {
-
-    const currentCycle =
-      getCurrentCycle();
-
-    if (currentCycle !== lastCycle) {
-
-      console.log(
-        "🔄 Cycle Changed → Resetting Data"
+      console.error(
+        "Failed to initialize database:",
+        err
       );
 
-      await Item.deleteMany({
-        cycle: lastCycle
-      });
+    });
+
+  // AUTO DELETE OLD COLLECTED ITEMS (Persistent server only)
+  setInterval(async () => {
+
+    try {
+
+      const date = new Date();
+
+      date.setMonth(
+        date.getMonth() - 1
+      );
 
       await Collected.deleteMany({
-        cycle: lastCycle
+        collectedAt: {
+          $lt: date
+        }
       });
 
-      lastCycle = currentCycle;
+      console.log(
+        "Auto delete: Old collected items checked."
+      );
+
+    } catch (err) {
+
+      console.error(
+        "Auto delete collected interval error:",
+        err.message
+      );
 
     }
 
-  } catch (err) {
+  }, 86400000);
 
-    console.error(
-      "Auto cycle reset interval error:",
-      err.message
-    );
+  // AUTO CYCLE RESET (Persistent server only)
+  let lastCycle = getCurrentCycle();
 
-  }
+  setInterval(async () => {
 
-}, 86400000);
+    try {
+
+      const currentCycle =
+        getCurrentCycle();
+
+      if (currentCycle !== lastCycle) {
+
+        console.log(
+          "🔄 Cycle Changed → Resetting Data"
+        );
+
+        await Item.deleteMany({
+          cycle: lastCycle
+        });
+
+        await Collected.deleteMany({
+          cycle: lastCycle
+        });
+
+        lastCycle = currentCycle;
+
+      }
+
+    } catch (err) {
+
+      console.error(
+        "Auto cycle reset interval error:",
+        err.message
+      );
+
+    }
+
+  }, 86400000);
+
+}
 
 // ======================================================
 // EXPORT FOR VERCEL
