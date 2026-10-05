@@ -1172,26 +1172,25 @@ body.dark-theme .btn-primary {
 /* Below Laptop View (Mobile/Tablet < 992px) */
 @media (max-width: 991px) {
   #mainNavbar.navbar {
+    position: relative;
     height: 68px; /* Clean mobile height 60px-72px */
     padding: 0 16px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    position: sticky;
-    top: 0;
-    left: 0;
-    gap: 10px;
     overflow: hidden;
   }
 
   /* Hamburger Left-Aligned, Touch target 44px */
   #mainNavbar .hamburger-btn {
     display: flex;
-    position: static;
-    transform: none;
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
     width: 44px;
     height: 44px;
     min-width: 44px;
@@ -1201,11 +1200,13 @@ body.dark-theme .btn-primary {
     flex-shrink: 0;
     padding: 8px;
     border-radius: 8px;
+    z-index: 10;
   }
 
-  /* Hide Desktop links and actions */
+  /* Hide Desktop links, desktop actions, and left branding on mobile */
   #mainNavbar .nav-center .nav-center-inner,
-  #mainNavbar .nav-right {
+  #mainNavbar .nav-right,
+  #mainNavbar .nav-left-group {
     display: none !important;
   }
 
@@ -1219,25 +1220,27 @@ body.dark-theme .btn-primary {
     display: none !important;
   }
 
-  /* Center Group - MITS Banner Logo responsive */
+  /* Center Group - MITS Banner Logo visually centered relative to full navbar */
   #mainNavbar .nav-center {
-    position: static;
-    transform: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    flex: 1 1 auto;
-    min-width: 0;
+    justify-content: center;
     width: auto;
+    max-width: 200px;
+    margin: 0;
     padding: 0;
-    max-width: 240px;
-    margin-left: auto;
+    z-index: 5;
+    pointer-events: auto;
   }
 
   #mainNavbar .mits-banner-img.mobile-only-banner {
     display: block;
-    height: 40px;
-    max-height: 44px;
+    height: 38px;
+    max-height: 42px;
     max-width: 190px;
     width: auto;
     object-fit: contain;
@@ -1248,34 +1251,6 @@ body.dark-theme .btn-primary {
   #mainNavbar #desktopNavProfileContainer {
     display: none !important;
   }
-
-  /* Nav Left Group */
-  #mainNavbar .nav-left-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-    position: static;
-    min-width: 0;
-  }
-
-  /* Show Logo Icon only, hide brand text, cleanly aligned */
-  #mainNavbar .nav-brand {
-    position: static;
-    transform: none;
-    display: flex;
-    align-items: center;
-  }
-
-  #mainNavbar .nav-brand-text-container {
-    display: none !important; /* Hide long text */
-  }
-
-  #mainNavbar .mits-logo {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-  }
 }
 
 /* Tablet (768px to 991px) */
@@ -1284,12 +1259,15 @@ body.dark-theme .btn-primary {
     height: 70px;
     padding: 0 20px;
   }
+  #mainNavbar .hamburger-btn {
+    left: 18px;
+  }
   #mainNavbar .nav-center {
-    max-width: 280px;
+    max-width: 230px;
   }
   #mainNavbar .mits-banner-img.mobile-only-banner {
-    max-width: 240px;
-    height: 44px;
+    max-width: 210px;
+    height: 40px;
   }
 }
 
@@ -1297,49 +1275,52 @@ body.dark-theme .btn-primary {
 @media (max-width: 767px) {
   #mainNavbar.navbar {
     height: 64px;
-    padding: 8px 14px;
+    padding: 0 12px;
   }
   #mainNavbar .hamburger-btn {
-    width: 44px;
-    height: 44px;
+    left: 12px;
+    width: 42px;
+    height: 42px;
     font-size: 24px;
   }
   #mainNavbar .nav-center {
-    max-width: 210px;
+    max-width: 190px;
   }
   #mainNavbar .mits-banner-img.mobile-only-banner {
-    height: 38px;
-    max-width: 185px;
-  }
-  #mainNavbar .mits-logo {
-    width: 34px;
-    height: 34px;
+    height: 36px;
+    max-width: 180px;
   }
 }
 
 /* Small Mobile (< 480px) */
 @media (max-width: 479px) {
   #mainNavbar.navbar {
-    height: 62px;
-    padding: 6px 12px;
-    gap: 6px;
+    height: 60px;
+    padding: 0 10px;
   }
   #mainNavbar .hamburger-btn {
+    left: 10px;
     width: 40px;
     height: 40px;
     font-size: 22px;
   }
   #mainNavbar .nav-center {
-    max-width: 180px;
+    max-width: 175px;
   }
   #mainNavbar .mits-banner-img.mobile-only-banner {
     height: 34px;
-    max-width: 170px;
+    max-width: 165px;
   }
-  /* Keep logo icon compact and tidy on narrow screens */
-  #mainNavbar .mits-logo {
-    width: 30px;
-    height: 30px;
+}
+
+/* Suppress floating Google Translate on mobile viewports & standalone PWA */
+@media (max-width: 991px), (display-mode: standalone) {
+  body > #google_translate_element,
+  .goog-te-banner-frame,
+  .goog-te-balloon-frame,
+  .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+  .VIpgJd-ZVi9od-aZ2wEe {
+    display: none !important;
   }
 }
 

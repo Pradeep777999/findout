@@ -161,6 +161,15 @@ function serveManager(req, res) {
   res.sendFile(path.join(__dirname, "../views/admin/manager.html"));
 }
 
+// Serves mobile notifications and profile pages
+function serveNotifications(req, res) {
+  res.sendFile(path.join(__dirname, "../views/user/notifications.html"));
+}
+
+function serveProfile(req, res) {
+  res.sendFile(path.join(__dirname, "../views/user/profile.html"));
+}
+
 module.exports = {
   getCurrentUser,
   changeName,
@@ -177,5 +186,7 @@ module.exports = {
   serveItems,
   serveAdmin,
   serveAnalytics,
-  serveManager
+  serveManager,
+  serveNotifications,
+  serveProfile
 };

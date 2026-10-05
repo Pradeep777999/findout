@@ -19,6 +19,10 @@ router.get("/items.html", userController.serveItems);
 router.get("/my-items.html", requireLoginView, userController.serveMyItems);
 router.get("/report-lost.html", requireLoginView, userController.serveReportLost);
 router.get("/report-found.html", requireLoginView, userController.serveReportFound);
+router.get("/notifications.html", requireLoginView, userController.serveNotifications);
+router.get("/notifications", requireLoginView, userController.serveNotifications);
+router.get("/profile.html", requireLoginView, userController.serveProfile);
+router.get("/profile", requireLoginView, userController.serveProfile);
 
 // Protected admin/manager views
 router.get("/admin.html", requireAdminView, userController.serveAdmin);

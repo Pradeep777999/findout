@@ -416,27 +416,30 @@
       profileEl.title = 'Open Profile Settings';
       profileEl.onclick = () => {
         closeDrawer();
-        openProfileModal();
+        window.location.href = '/profile.html';
       };
 
-      // In-App Notifications link in Mobile Drawer
-      const notifDrawerLink = document.createElement('div');
+      // In-App Notifications link in Mobile Drawer (Navigates to dedicated page)
+      const notifDrawerLink = document.createElement('a');
+      notifDrawerLink.href = '/notifications.html';
       notifDrawerLink.className = 'drawer-link m-notif-link';
       notifDrawerLink.id = 'drawerNotifLink';
-      notifDrawerLink.style.cursor = 'pointer';
       notifDrawerLink.innerHTML = `
         <span style="display:flex; align-items:center; gap:14px; font-weight:600;">
           <span class="icon">🔔</span> Notifications
         </span>
         <span class="m-notif-badge" id="drawerNotifBadge" style="display:none;">0</span>
       `;
+      notifDrawerLink.addEventListener('click', () => {
+        closeDrawer();
+      });
       drawerContainer.appendChild(notifDrawerLink);
 
-      // Profile link in Mobile Drawer
-      const profileDrawerLink = document.createElement('div');
+      // Profile link in Mobile Drawer (Navigates to dedicated page)
+      const profileDrawerLink = document.createElement('a');
+      profileDrawerLink.href = '/profile.html';
       profileDrawerLink.className = 'drawer-link m-profile-link';
       profileDrawerLink.id = 'drawerProfileLink';
-      profileDrawerLink.style.cursor = 'pointer';
       profileDrawerLink.innerHTML = `
         <span style="display:flex; align-items:center; gap:14px; font-weight:600;">
           <span class="icon">👤</span> Profile
@@ -445,7 +448,6 @@
       `;
       profileDrawerLink.addEventListener('click', () => {
         closeDrawer();
-        openProfileModal();
       });
       drawerContainer.appendChild(profileDrawerLink);
 
@@ -509,12 +511,20 @@
     // Google Translate / Language link inside drawer links
     const aLang = document.createElement('div');
     aLang.className = 'drawer-link m-lang-item';
+    aLang.id = 'drawerLangItem';
     aLang.innerHTML = `
       <span style="display:flex; align-items:center; gap:14px;">
         <span class="icon">🌐</span> Language
       </span>
       <div id="google_translate_element_mobile_target" class="m-translate-target"></div>
     `;
+    aLang.addEventListener('click', (e) => {
+      const combo = aLang.querySelector('.goog-te-combo, .goog-te-gadget-simple, a');
+      if (combo && !e.target.closest('.goog-te-combo, .goog-te-gadget-simple')) {
+        combo.focus();
+        combo.click();
+      }
+    });
     drawerContainer.appendChild(aLang);
 
     // Help link
@@ -601,6 +611,9 @@
 
     // Sync push notification status in UI
     ensurePushScriptLoaded().then(() => syncPushUI());
+
+    // Reposition Google Translate widget into mobile drawer or desktop target
+    repositionTranslateWidget();
   }
 
   // Dark Mode Switch UI Helper
@@ -1678,16 +1691,15 @@
       desktopBtn.onclick = toggleNotificationPanel;
     }
 
-    // Drawer link click
+    // Drawer link click navigates cleanly to Notifications Page
     const drawerLink = document.getElementById("drawerNotifLink");
     if (drawerLink) {
-      drawerLink.onclick = (e) => {
+      drawerLink.onclick = () => {
         if (mobileDrawer) {
           mobileDrawer.classList.remove('active');
           if (drawerOverlay) drawerOverlay.classList.remove('active');
           document.body.classList.remove('drawer-open');
         }
-        toggleNotificationPanel(e);
       };
     }
 
@@ -1724,6 +1736,7 @@
   // Setup Drawer actions and gestures
   function setupDrawerEvents() {
     function openDrawer() {
+      repositionTranslateWidget();
       mobileDrawer.classList.add('active');
       drawerOverlay.classList.add('active');
       document.body.classList.add('drawer-open');
@@ -1788,11 +1801,16 @@
     });
   }
 
-  // Reposition Google Translate Widget depending on viewport
+  // Reposition Google Translate Widget depending on viewport / standalone mode
   function repositionTranslateWidget() {
+    if (!translateElement) {
+      translateElement = document.getElementById('google_translate_element');
+    }
     if (!translateElement) return;
 
-    if (window.innerWidth < 992) {
+    const isMobile = window.innerWidth < 992 || window.matchMedia('(display-mode: standalone)').matches;
+
+    if (isMobile) {
       const mobileTarget = document.getElementById('google_translate_element_mobile_target');
       if (mobileTarget && translateElement.parentElement !== mobileTarget) {
         mobileTarget.appendChild(translateElement);
