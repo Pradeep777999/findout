@@ -1090,9 +1090,8 @@
     /* ================= RESPONSIVE ================= */
 
     @media(max-width: 900px) {
-
       .navbar {
-        padding: 0 16px;
+        padding: 0 14px;
       }
 
       .nav-links {
@@ -1100,27 +1099,65 @@
       }
 
       .page {
-        padding: 22px 15px 40px;
+        padding: 16px 12px 36px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
       }
 
       .filters-row {
         flex-direction: column;
+        width: 100%;
       }
 
       .filter-group {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .filter-group input,
+      .filter-group select {
+        font-size: 16px; /* Android zoom prevention */
+        min-height: 48px;
         width: 100%;
       }
 
       .header-stats {
         width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
       }
 
       .hstat {
         flex: 1;
+        min-width: 0;
+        padding: 10px 14px;
+      }
+
+      .tab-bar {
+        width: 100%;
+        overflow-x: auto;
+        padding: 4px;
+        display: flex;
+        gap: 6px;
       }
 
       .tab-btn {
-        padding: 9px 13px;
+        padding: 9px 12px;
+        font-size: 13px;
+        white-space: nowrap;
+        flex: 1;
+        justify-content: center;
+      }
+
+      .modal {
+        padding: 12px;
+      }
+
+      .modal-inner {
+        width: 100%;
+        max-width: 100%;
       }
     }
   </style>

@@ -388,10 +388,12 @@ input.invalid:focus { box-shadow: 0 0 0 4px rgba(192,57,43,0.07); }
   
   .right-wrap {
     margin-left: 0;
-    height: 100vh;
+    min-height: 100vh;
+    height: auto;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     background: #faf8f5 !important;
   }
   
@@ -566,18 +568,19 @@ input.invalid:focus { box-shadow: 0 0 0 4px rgba(192,57,43,0.07); }
 
   /* Form Card Overlay - BOTTOM SECTION */
   .main-area {
-    flex: 1;
-    padding: 0 16px 12px;
+    flex: 1 0 auto;
+    padding: 0 16px 36px;
     margin-top: -6px;
     position: relative;
     z-index: 10;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    justify-content: stretch;
+    overflow: visible;
+    justify-content: flex-start;
+    width: 100%;
+    box-sizing: border-box;
   }
   .reg-card {
-    flex: 1;
     display: flex;
     flex-direction: column;
     border-radius: 22px;
@@ -586,9 +589,11 @@ input.invalid:focus { box-shadow: 0 0 0 4px rgba(192,57,43,0.07); }
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    padding: 12px 16px;
-    overflow: hidden;
-    justify-content: space-between;
+    padding: 16px;
+    overflow: visible;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .card-accent, .card-header, .progress-steps {
     display: none !important;

@@ -17,7 +17,33 @@
   --nav-shadow:     0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
-/* Base Reset & Core Styles for Navbar */
+/* Global Responsive Foundation & Core Styles for Navbar */
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+video,
+svg,
+canvas {
+  max-width: 100%;
+}
+
 #mainNavbar.navbar {
   all: unset; /* Prevent bootstrap or other styles from interfering */
   box-sizing: border-box;
@@ -25,6 +51,7 @@
   top: 0;
   left: 0;
   width: 100%;
+  max-width: 100%;
   z-index: 1000;
   background: var(--nav-navy);
   border-bottom: 1px solid var(--nav-border);
@@ -453,15 +480,18 @@
   right: 0;
   left: auto;
   bottom: 0;
-  width: 82vw;
+  width: min(85vw, 320px);
   max-width: 320px;
-  min-width: 260px;
+  min-width: 0;
   height: 100vh;
+  height: 100dvh;
   z-index: 2000;
   background: #ffffff;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
   transform: translateX(100%);
-  transition: transform 0.30s ease-in-out;
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform 0.30s ease-in-out, visibility 0.30s ease-in-out;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -473,6 +503,8 @@
 
 #mobileDrawer.active {
   transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
 }
 
 /* Redesigned Header */
@@ -1140,18 +1172,35 @@ body.dark-theme .btn-primary {
 /* Below Laptop View (Mobile/Tablet < 992px) */
 @media (max-width: 991px) {
   #mainNavbar.navbar {
-    height: 75px; /* Mobile height */
+    height: 68px; /* Clean mobile height 60px-72px */
     padding: 0 16px;
-    justify-content: center; /* Center content (MITS Banner) */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    left: 0;
+    gap: 10px;
+    overflow: hidden;
   }
 
-  /* Hamburger Left-Aligned */
+  /* Hamburger Left-Aligned, Touch target 44px */
   #mainNavbar .hamburger-btn {
     display: flex;
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
+    position: static;
+    transform: none;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    flex-shrink: 0;
+    padding: 8px;
+    border-radius: 8px;
   }
 
   /* Hide Desktop links and actions */
@@ -1170,21 +1219,29 @@ body.dark-theme .btn-primary {
     display: none !important;
   }
 
-  /* Centered Banner always */
+  /* Center Group - MITS Banner Logo responsive */
   #mainNavbar .nav-center {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    position: static;
+    transform: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1 1 auto;
+    min-width: 0;
     width: auto;
     padding: 0;
-    max-width: 320px;
+    max-width: 240px;
+    margin-left: auto;
   }
 
   #mainNavbar .mits-banner-img.mobile-only-banner {
     display: block;
-    height: 48px;
-    max-width: 320px;
+    height: 40px;
+    max-height: 44px;
+    max-width: 190px;
+    width: auto;
+    object-fit: contain;
+    flex-shrink: 1;
   }
 
   /* Hide Desktop Profile on Mobile Viewports */
@@ -1192,12 +1249,22 @@ body.dark-theme .btn-primary {
     display: none !important;
   }
 
-  /* Show Logo Icon only, hide brand text, aligned next to hamburger */
+  /* Nav Left Group */
+  #mainNavbar .nav-left-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    position: static;
+    min-width: 0;
+  }
+
+  /* Show Logo Icon only, hide brand text, cleanly aligned */
   #mainNavbar .nav-brand {
-    position: absolute;
-    left: 72px;
-    top: 50%;
-    transform: translateY(-50%);
+    position: static;
+    transform: none;
+    display: flex;
+    align-items: center;
   }
 
   #mainNavbar .nav-brand-text-container {
@@ -1205,52 +1272,89 @@ body.dark-theme .btn-primary {
   }
 
   #mainNavbar .mits-logo {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
   }
 }
 
 /* Tablet (768px to 991px) */
 @media (min-width: 768px) and (max-width: 991px) {
-  #mainNavbar .nav-center {
-    max-width: 320px;
+  #mainNavbar.navbar {
+    height: 70px;
+    padding: 0 20px;
   }
-  #mainNavbar .mits-banner-img {
-    max-width: 320px;
+  #mainNavbar .nav-center {
+    max-width: 280px;
+  }
+  #mainNavbar .mits-banner-img.mobile-only-banner {
+    max-width: 240px;
+    height: 44px;
   }
 }
 
 /* Mobile (< 768px) */
 @media (max-width: 767px) {
+  #mainNavbar.navbar {
+    height: 64px;
+    padding: 8px 14px;
+  }
+  #mainNavbar .hamburger-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+  }
   #mainNavbar .nav-center {
-    max-width: 240px;
+    max-width: 210px;
   }
-  #mainNavbar .mits-banner-img {
-    height: 42px;
-    max-width: 240px;
+  #mainNavbar .mits-banner-img.mobile-only-banner {
+    height: 38px;
+    max-width: 185px;
   }
-  /* On small screens, logo image may overlap, let's keep logo icon hidden on very small screens or make it fit */
   #mainNavbar .mits-logo {
     width: 34px;
     height: 34px;
-  }
-  #mainNavbar .nav-brand {
-    left: 64px;
   }
 }
 
 /* Small Mobile (< 480px) */
 @media (max-width: 479px) {
+  #mainNavbar.navbar {
+    height: 62px;
+    padding: 6px 12px;
+    gap: 6px;
+  }
+  #mainNavbar .hamburger-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
   #mainNavbar .nav-center {
-    max-width: 190px;
+    max-width: 180px;
   }
-  #mainNavbar .mits-banner-img {
-    height: 36px;
-    max-width: 190px;
+  #mainNavbar .mits-banner-img.mobile-only-banner {
+    height: 34px;
+    max-width: 170px;
   }
-  /* Hide logo icon to save critical space on extremely narrow screens (<480px) */
-  #mainNavbar .nav-brand {
-    display: none;
+  /* Keep logo icon compact and tidy on narrow screens */
+  #mainNavbar .mits-logo {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Extremely Small Mobile (320px - 360px) */
+@media (max-width: 360px) {
+  #mainNavbar.navbar {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  #mainNavbar .mits-logo {
+    display: none; /* Hide small icon if screen is 320px to give full space to banner */
+  }
+  #mainNavbar .mits-banner-img.mobile-only-banner {
+    max-width: 155px;
+    height: 32px;
   }
 }
 

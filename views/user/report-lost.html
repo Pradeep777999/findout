@@ -421,7 +421,9 @@
 
     .notice-marquee {
       overflow: hidden;
-      flex: 1;
+      flex: 1 1 0;
+      min-width: 0;
+      width: 0;
     }
 
     .notice-text {
@@ -841,17 +843,136 @@
       }
     }
 
-    @media (max-width: 680px) {
-      .field-row {
-        grid-template-columns: 1fr;
+    @media (max-width: 767px) {
+      .report-layout-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 12px auto 36px;
+        padding: 0 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        box-sizing: border-box;
       }
 
-      .form-body {
-        padding: 20px;
+      .left-panel {
+        padding: 22px 18px;
+        border-radius: 18px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      .left-title {
+        font-size: clamp(24px, 7vw, 34px);
+        line-height: 1.2;
+      }
+
+      .left-steps {
+        gap: 12px;
+      }
+
+      .step-item {
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .step-num {
+        flex: 0 0 28px;
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+      }
+
+      .step-text {
+        min-width: 0;
+        flex: 1;
+        font-size: 13px;
+      }
+
+      .urgency-badge {
+        margin-top: 20px;
+        padding: 12px 14px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .right-content {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      .page-header h1 {
+        font-size: clamp(24px, 6.5vw, 32px);
+      }
+
+      .page-header p {
+        font-size: 13.5px;
+        max-width: 100%;
       }
 
       .tips-strip {
+        display: flex;
+        flex-direction: column;
         gap: 8px;
+        width: 100%;
+      }
+
+      .tip-chip {
+        width: 100%;
+        box-sizing: border-box;
+        justify-content: flex-start;
+      }
+
+      .form-card {
+        border-radius: 16px;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .form-section-header {
+        padding: 14px 16px;
+      }
+
+      .form-body {
+        padding: 18px 14px;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .field-group {
+        margin-bottom: 16px;
+        min-width: 0;
+        width: 100%;
+      }
+
+      input[type="text"],
+      input[type="date"],
+      input[type="tel"],
+      select,
+      textarea {
+        font-size: 16px; /* Android zoom prevention */
+        min-height: 48px;
+        padding: 12px 14px;
+      }
+
+      textarea {
+        min-height: 110px;
+      }
+
+      .btn-submit {
+        min-height: 52px;
+        font-size: 16px;
+        width: 100%;
+      }
+
+      .info-box {
+        padding: 14px;
+        font-size: 12px;
       }
     }
   </style>
