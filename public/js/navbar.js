@@ -112,9 +112,26 @@
     // Hook drawer events
     setupDrawerEvents();
 
+    // Check & sync PWA standalone mobile status
+    syncPwaMobileClass();
+
     // Setup Google Translate responsive position
     repositionTranslateWidget();
-    window.addEventListener('resize', repositionTranslateWidget);
+    window.addEventListener('resize', () => {
+      syncPwaMobileClass();
+      repositionTranslateWidget();
+    });
+
+    // Register / update PWA Service Worker globally
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then((reg) => {
+          if (reg) reg.update();
+        })
+        .catch((err) => {
+          console.warn('PWA service worker check:', err);
+        });
+    }
 
     // Apply initial dark theme setting
     if (localStorage.getItem('dark-mode') === 'enabled') {
@@ -1801,6 +1818,20 @@
     });
   }
 
+  // PWA Standalone Detection
+  function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  }
+
+  // Sync PWA mobile class to documentElement
+  function syncPwaMobileClass() {
+    if (isStandalone() && window.innerWidth <= 767) {
+      document.documentElement.classList.add('is-pwa-mobile');
+    } else {
+      document.documentElement.classList.remove('is-pwa-mobile');
+    }
+  }
+
   // Reposition Google Translate Widget depending on viewport / standalone mode
   function repositionTranslateWidget() {
     if (!translateElement) {
@@ -1808,7 +1839,8 @@
     }
     if (!translateElement) return;
 
-    const isMobile = window.innerWidth < 992 || window.matchMedia('(display-mode: standalone)').matches;
+    const standalone = isStandalone();
+    const isMobile = window.innerWidth <= 991 || (standalone && window.innerWidth <= 767);
 
     if (isMobile) {
       const mobileTarget = document.getElementById('google_translate_element_mobile_target');

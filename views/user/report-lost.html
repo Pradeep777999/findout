@@ -3,10 +3,13 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>Report Lost Item — MITS FindMyThing Portal</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
@@ -843,7 +846,28 @@
       }
     }
 
-    @media (max-width: 767px) {
+    @media (max-width: 767px), (display-mode: standalone) and (max-width: 767px) {
+      html,
+      body {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      img,
+      video,
+      svg,
+      canvas {
+        max-width: 100%;
+      }
+
       .report-layout-container {
         width: 100%;
         max-width: 100%;
@@ -853,6 +877,7 @@
         flex-direction: column;
         gap: 18px;
         box-sizing: border-box;
+        overflow-x: hidden;
       }
 
       .left-panel {

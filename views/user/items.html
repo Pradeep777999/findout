@@ -3,10 +3,13 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>All Items — MITS FindMyThing Portal</title>
 
   <link
@@ -834,13 +837,35 @@
       }
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
+    /* Responsive & PWA */
+    @media (max-width: 768px), (display-mode: standalone) and (max-width: 767px) {
+      html,
+      body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        margin: 0;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      img,
+      video,
+      svg,
+      canvas {
+        max-width: 100%;
+      }
+
       .page {
         padding: 16px 12px 36px;
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
+        overflow-x: hidden;
       }
 
       .navbar {
@@ -886,6 +911,27 @@
 
       .page-header-left h1 {
         font-size: clamp(22px, 6vw, 28px);
+      }
+
+      .table-card {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      .table-scroll {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        display: block;
+        box-sizing: border-box;
+      }
+
+      table {
+        min-width: 580px;
+        width: 100%;
       }
     }
   </style>

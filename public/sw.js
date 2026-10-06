@@ -1,16 +1,59 @@
-const CACHE_NAME = "findout-v1";
+const CACHE_NAME = "findout-v2";
 
 self.addEventListener("install", (event) => {
     self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-    event.waitUntil(self.clients.claim());
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        }).then(() => self.clients.claim())
+    );
 });
 
 self.addEventListener("fetch", (event) => {
-    // Let the browser handle all requests normally.
-    // We are not caching API/private data at this stage.
+    const url = new URL(event.request.url);
+
+    // Skip non-GET, cross-origin, uploads, APIs, and auth requests
+    if (event.request.method !== "GET" || url.origin !== self.location.origin) {
+        return;
+    }
+
+    if (
+        url.pathname.startsWith("/api/") ||
+        url.pathname.startsWith("/login") ||
+        url.pathname.startsWith("/register") ||
+        url.pathname.startsWith("/logout") ||
+        url.pathname.startsWith("/uploads/")
+    ) {
+        return;
+    }
+
+    // Network-first strategy for app shell, HTML and static assets (CSS, JS, icons)
+    // Ensures installed PWA always receives the latest responsive CSS/JS when online,
+    // falling back to cached shell when offline.
+    event.respondWith(
+        fetch(event.request)
+            .then((networkResponse) => {
+                if (networkResponse && networkResponse.status === 200 && networkResponse.type === "basic") {
+                    const responseToCache = networkResponse.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseToCache);
+                    });
+                }
+                return networkResponse;
+            })
+            .catch(() => {
+                return caches.match(event.request);
+            })
+    );
 });
 
 // ======================================================

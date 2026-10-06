@@ -474,8 +474,10 @@
       const backBtn = document.getElementById('notifBackBtn');
       if (backBtn) {
         backBtn.addEventListener('click', (e) => {
-          if (window.history.length <= 1) {
-            e.preventDefault();
+          e.preventDefault();
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
             window.location.href = '/';
           }
         });

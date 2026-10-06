@@ -4,10 +4,13 @@
 <head>
 
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="mobile-web-app-capable" content="yes">
 
   <title>Collected Items — MITS FindMyThing Portal</title>
 
@@ -693,18 +696,54 @@
       cursor: pointer;
     }
 
-    /* ================= MOBILE ================= */
+    /* ================= MOBILE & PWA ================= */
+    @media (max-width: 900px), (display-mode: standalone) and (max-width: 767px) {
+      html,
+      body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        margin: 0;
+      }
 
-    @media(max-width:900px) {
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      img,
+      video,
+      svg,
+      canvas {
+        max-width: 100%;
+      }
+
       .page {
         padding: 16px 12px 36px;
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
+        overflow-x: hidden;
       }
 
       .navbar {
         padding: 0 14px;
+      }
+
+      .header-stats {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .hstat {
+        min-width: 0;
+        width: 100%;
+        padding: 10px 12px;
+        box-sizing: border-box;
       }
 
       .filters-row {
@@ -737,6 +776,27 @@
         padding: 9px 14px;
         flex: 1;
         justify-content: center;
+      }
+
+      .table-card {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      .table-scroll {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        display: block;
+        box-sizing: border-box;
+      }
+
+      table {
+        min-width: 580px;
+        width: 100%;
       }
     }
   </style>

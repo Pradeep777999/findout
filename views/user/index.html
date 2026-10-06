@@ -591,7 +591,7 @@
       }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 768px), (display-mode: standalone) and (max-width: 767px) {
       .hero-mits {
         min-height: auto;
         padding: 32px 16px 36px;
@@ -1566,9 +1566,30 @@
     }
 
     /* ══════════════════════════════
-   MOBILE
+   MOBILE & PWA
 ══════════════════════════════ */
-    @media (max-width: 768px) {
+    @media (max-width: 768px), (display-mode: standalone) and (max-width: 767px) {
+      html,
+      body {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      img,
+      video,
+      svg,
+      canvas {
+        max-width: 100%;
+      }
+
       .navbar {
         padding: 0 16px;
       }
@@ -1709,13 +1730,21 @@
 
       footer {
         padding: 40px 16px 24px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .footer-top {
-        gap: 32px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 28px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
       }
 
       .footer-col {
+        width: 100%;
         text-align: center;
       }
     }
@@ -2198,6 +2227,9 @@
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("/sw.js")
           .then((registration) => {
+            if (registration) {
+              registration.update();
+            }
             console.log(
               "Findout Service Worker registered:",
               registration.scope

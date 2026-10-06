@@ -104,70 +104,75 @@ async function changePassword(req, res) {
   }
 }
 
+// Helper to send HTML views with fresh cache headers
+function sendFreshHtml(res, filePath) {
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.sendFile(filePath);
+}
+
 // Serves main index page
 function serveIndex(req, res) {
-  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-  res.sendFile(path.join(__dirname, "../views/user/index.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/user/index.html"));
 }
 
 // Serves authentication pages
 function serveLogin(req, res) {
-  res.sendFile(path.join(__dirname, "../views/auth/login.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/auth/login.html"));
 }
 
 function serveRegister(req, res) {
-  res.sendFile(path.join(__dirname, "../views/auth/register.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/auth/register.html"));
 }
 
 function serveLoginOtp(req, res) {
-  res.sendFile(path.join(__dirname, "../views/auth/login-otp.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/auth/login-otp.html"));
 }
 
 function serveReset(req, res) {
-  res.sendFile(path.join(__dirname, "../views/auth/reset.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/auth/reset.html"));
 }
 
 // Serves user-facing lost and found catalog pages
 function serveMyItems(req, res) {
-  res.sendFile(path.join(__dirname, "../views/user/my-items.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/user/my-items.html"));
 }
 
 function serveReportLost(req, res) {
-  res.sendFile(path.join(__dirname, "../views/user/report-lost.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/user/report-lost.html"));
 }
 
 function serveReportFound(req, res) {
-  res.sendFile(path.join(__dirname, "../views/user/report-found.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/user/report-found.html"));
 }
 
 function serveCollected(req, res) {
-  res.sendFile(path.join(__dirname, "../views/user/collected.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/user/collected.html"));
 }
 
 function serveItems(req, res) {
-  res.sendFile(path.join(__dirname, "../views/user/items.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/user/items.html"));
 }
 
 // Serves administrative panels
 function serveAdmin(req, res) {
-  res.sendFile(path.join(__dirname, "../views/admin/admin.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/admin/admin.html"));
 }
 
 function serveAnalytics(req, res) {
-  res.sendFile(path.join(__dirname, "../views/admin/analytics.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/admin/analytics.html"));
 }
 
 function serveManager(req, res) {
-  res.sendFile(path.join(__dirname, "../views/admin/manager.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/admin/manager.html"));
 }
 
 // Serves mobile notifications and profile pages
 function serveNotifications(req, res) {
-  res.sendFile(path.join(__dirname, "../views/user/notifications.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/user/notifications.html"));
 }
 
 function serveProfile(req, res) {
-  res.sendFile(path.join(__dirname, "../views/user/profile.html"));
+  sendFreshHtml(res, path.join(__dirname, "../views/user/profile.html"));
 }
 
 module.exports = {
